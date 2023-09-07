@@ -35,8 +35,8 @@
   "packageManager": "npm@8.1.2",
   "license": "GPL-3.0-only",
   "dependencies": {
-    "@types/ws": "^8.5.3",
-    "ws": "^8.5.0"
+    "@types/ws": "^8.5.5",
+    "ws": "^8.14.0"
   },
   "devDependencies": {
     "ts-node": "^10.7.0",
