@@ -84,7 +84,6 @@ export class DiscordClient extends EventEmitter {
         setTimeout(() => {
             if (!this.ack) {
                 this.ws.close();
-                this.ack = false;
                 if (this.heartbeatTimer) {
                     clearInterval(this.heartbeatTimer);
                 }
