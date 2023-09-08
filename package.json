@@ -1,6 +1,6 @@
 {
   "name": "discord-gateways",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Connects to Discord Gateway through websocket and emits events on each Discord Intent",
   "files": [
     "dist"
