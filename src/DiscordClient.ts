@@ -10,7 +10,8 @@ export class DiscordClient extends EventEmitter {
     private discordToken: string;
     private seq: number | null;
     private session_id: string | null;
-    private ack: boolean;
+    private ack: Array<number>;
+    private ackTimer: NodeJS.Timer | undefined;
     private heartbeatTimer: NodeJS.Timer | undefined;
     private ws: WebSocket;
 
@@ -19,7 +20,7 @@ export class DiscordClient extends EventEmitter {
         this.discordToken = discordToken;
         this.seq = null;
         this.session_id = null;
-        this.ack = false;
+        this.ack = [];
         this.ws = new WebSocket('wss://gateway.discord.gg/?v=6&encoding=json');
     }
 
@@ -34,9 +35,14 @@ export class DiscordClient extends EventEmitter {
             if (this.heartbeatTimer) {
                 clearInterval(this.heartbeatTimer);
             }
+
+            if (this.ackTimer) {
+                clearInterval(this.ackTimer);
+            }
+
             this.seq = null;
             this.session_id = null;
-            this.ack = false;
+            this.ack = [];
 
             setTimeout(this.connect, 5000);
         });
@@ -71,7 +77,7 @@ export class DiscordClient extends EventEmitter {
                     this.identify();
                 }
             } else if (op == 11) {
-                this.ack = true;
+                this.ack.shift();
             }
 
             switch (t) {
@@ -90,13 +96,18 @@ export class DiscordClient extends EventEmitter {
             'op': 1,
             'd': this.seq
         }));
-        this.ack = false;
 
-        setTimeout(() => {
-            if (!this.ack) {
-                this.ws.close();
-            }
-        }, 5000);
+        this.ack.push(new Date().getTime());
+
+        if (!this.ackTimer) {
+            this.ackTimer = setInterval(() => {
+                if (this.ack.length > 0) {
+                    if (new Date().getTime() - this.ack[0] > 5000) {
+                        this.ws.close();
+                    }
+                }
+            }, 5000)
+        }
     }
 
     private identify() {
