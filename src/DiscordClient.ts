@@ -26,8 +26,16 @@ export class DiscordClient extends EventEmitter {
     public connect() {
         this.ws = new WebSocket('wss://gateway.discord.gg/?v=6&encoding=json');
 
-        this.ws.addEventListener('error', event => {
+        this.ws.on('error', event => {
             console.error(`WebSocket error: ${event}`);
+        });
+
+        this.ws.on('close', () => {
+            if (this.heartbeatTimer) {
+                clearInterval(this.heartbeatTimer);
+            }
+
+            setTimeout(this.connect, 5000);
         });
 
         this.ws.on('message', (data: string) => {
@@ -84,10 +92,6 @@ export class DiscordClient extends EventEmitter {
         setTimeout(() => {
             if (!this.ack) {
                 this.ws.close();
-                if (this.heartbeatTimer) {
-                    clearInterval(this.heartbeatTimer);
-                }
-                this.connect();
             }
         }, 5000);
     }
