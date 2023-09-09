@@ -34,6 +34,9 @@ export class DiscordClient extends EventEmitter {
             if (this.heartbeatTimer) {
                 clearInterval(this.heartbeatTimer);
             }
+            this.seq = null;
+            this.session_id = null;
+            this.ack = false;
 
             setTimeout(this.connect, 5000);
         });
