@@ -21,11 +21,11 @@ export class DiscordClient extends EventEmitter {
         this.seq = null;
         this.session_id = null;
         this.ack = [];
-        this.ws = new WebSocket('wss://gateway.discord.gg/?v=6&encoding=json');
+        this.ws = new WebSocket('wss://gateway.discord.gg/?v=9&encoding=json');
     }
 
     public connect() {
-        this.ws = new WebSocket('wss://gateway.discord.gg/?v=6&encoding=json');
+        this.ws = new WebSocket('wss://gateway.discord.gg/?v=9&encoding=json');
 
         this.ws.on('error', event => {
             console.error(`WebSocket error: ${event}`);
